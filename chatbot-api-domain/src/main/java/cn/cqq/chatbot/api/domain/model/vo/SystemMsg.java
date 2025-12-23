@@ -1,4 +1,4 @@
-package cn.cqq.chatbot.api.domain.vo;
+package cn.cqq.chatbot.api.domain.model.vo;
 
 import lombok.Data;
 

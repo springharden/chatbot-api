@@ -30,6 +30,14 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>

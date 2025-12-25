@@ -3,15 +3,19 @@ package cn.cqq.chatbot.api.domain.bilibili.service;
 
 import cn.cqq.chatbot.api.domain.bilibili.IBiliBiliApi;
 import cn.cqq.chatbot.api.domain.bilibili.model.aggregates.MessageRes;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import java.awt.PageAttributes;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * B站接口实现类
@@ -25,11 +29,18 @@ public class BiliBiliApi implements IBiliBiliApi {
     public MessageRes queryMessageList(String cookie, Long lastReceiveMessageTime) {
         OkHttpClient client = new OkHttpClient();
 
+        String url = "https://api.vc.bilibili.com/session_svr/v1/session_svr/get_sessions?session_type=1&group_fold=1" +
+                "&unfollow_fold=0&sort_rule=2&build=0&mobi_app=web&web_location=333" +
+                ".40164&w_rid=e1d73f94eaaf9d04a6441694e95c2762";
+
+        String timeStr = "&wts=" + (ObjectUtil.isNotNull(lastReceiveMessageTime) ?
+                lastReceiveMessageTime.toString() : "");
+
+        String urlSuffix = "&end_ts=1766278827032286";
+
         // todo 替换wts
         Request request = new Request.Builder()
-                .url("https://api.vc.bilibili.com/session_svr/v1/session_svr/get_sessions?session_type=1&group_fold=1" +
-                        "&unfollow_fold=0&sort_rule=2&build=0&mobi_app=web&web_location=333" +
-                        ".40164&w_rid=e1d73f94eaaf9d04a6441694e95c2762&wts=1766324804&end_ts=1766278827032286")
+                .url(url)
                 .get()
                 .addHeader("accept", "*/*")
                 .addHeader("accept-language", "zh-CN,zh;q=0.9")
@@ -73,13 +84,19 @@ public class BiliBiliApi implements IBiliBiliApi {
     @Override
     public boolean sendMessage(String cookie, String message, Long receiverId) {
         OkHttpClient client = new OkHttpClient();
+        // 1. 解析Cookie字符串为键值对Map（自动处理空格、分隔符）
+        // 解析Cookie为Map（基于Hutool StrUtil）
+        Map<String, String> cookieMap = parseCookieToMap(cookie);
+
+        // 2. 提取bili_jct的值，支持空值判断
+        String biliJct = cookieMap.get("bili_jct");
 
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.create(mediaType, "msg%5Bsender_uid%5D=1406650124&msg%5Breceiver_type%5D=1&msg" +
                 "%5Breceiver_id%5D=396914695&msg%5Bmsg_type%5D=1&msg%5Bmsg_status%5D=0&msg%5Bcontent%5D=%7B%22content" +
                 "%22%3A%22%E4%BD%A0%E5%A5%BD%E5%91%80%EF%BC%8C%E5%90%8C%E5%BF%97%22%7D&msg%5Bnew_face_version%5D=0" +
                 "&msg%5Bcanal_token%5D=&msg%5Bdev_id%5D=079C1E6C-2DDA-49BB-B86A-06485DADC453&msg%5Btimestamp%5D" +
-                "=1766325510&from_firework=0&build=0&mobi_app=web&csrf=5d5a4e05e3362fffccc822e3472da23d");
+                "=1766325510&from_firework=0&build=0&mobi_app=web&csrf=" + biliJct);
         // todo 替换userId
         Request request = new Request.Builder()
                 .url("https://api.vc.bilibili.com/web_im/v1/web_im/send_msg?w_sender_uid=1406650124&w_receiver_id" +
@@ -122,5 +139,36 @@ public class BiliBiliApi implements IBiliBiliApi {
             e.printStackTrace();
         }
         return true;
+    }
+
+    /**
+     * 适配hutool-all 5.8.10的Cookie解析方法
+     *
+     * @param cookieStr Cookie字符串
+     * @return 键值对Map
+     */
+    private static Map<String, String> parseCookieToMap(String cookieStr) {
+        Map<String, String> cookieMap = new HashMap<>();
+        if (StrUtil.isBlank(cookieStr)) {
+            return cookieMap;
+        }
+
+        // 按分号分割Cookie项，忽略空字符串
+        List<String> cookieItems = StrUtil.split(cookieStr, ';');
+        for (String item : cookieItems) {
+            if (StrUtil.isBlank(item)) {
+                continue;
+            }
+            // 按等号分割键值对（只分割第一个等号，避免值中包含等号）
+            List<String> keyValue = StrUtil.split(item, '=', 2);
+            if (keyValue.size() != 2) {
+                continue;
+            }
+            // 去除键值前后空格
+            String key = StrUtil.trim(keyValue.get(0));
+            String value = StrUtil.trim(keyValue.get(1));
+            cookieMap.put(key, value);
+        }
+        return cookieMap;
     }
 }

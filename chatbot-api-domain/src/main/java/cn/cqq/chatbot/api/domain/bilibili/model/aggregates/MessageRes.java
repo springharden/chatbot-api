@@ -1,5 +1,6 @@
-package cn.cqq.chatbot.api.domain.model.vo;
+package cn.cqq.chatbot.api.domain.bilibili.model.aggregates;
 
+import cn.cqq.chatbot.api.domain.bilibili.model.res.messageData;
 import lombok.Data;
 
 /**
@@ -9,10 +10,10 @@ import lombok.Data;
  */
 
 @Data
-public class Response{
+public class MessageRes {
 	private String msg;
 	private int code;
-	private RespData data;
+	private messageData data;
 	private String message;
 	private int ttl;
 }

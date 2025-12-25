@@ -1,5 +1,7 @@
-package cn.cqq.chatbot.api.domain.model.vo;
+package cn.cqq.chatbot.api.domain.bilibili.model.res;
 
+import cn.cqq.chatbot.api.domain.bilibili.model.vo.SessionListItem;
+import cn.cqq.chatbot.api.domain.bilibili.model.vo.SystemMsg;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
  */
 
 @Data
-public class RespData {
+public class messageData {
 	private List<SessionListItem> sessionList;
 	private boolean showLevel;
 	private int isAddressListEmpty;

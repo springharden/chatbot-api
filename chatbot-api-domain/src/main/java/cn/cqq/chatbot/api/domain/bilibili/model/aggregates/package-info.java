@@ -1,0 +1,1 @@
+package cn.cqq.chatbot.api.domain.bilibili.model.aggregates;

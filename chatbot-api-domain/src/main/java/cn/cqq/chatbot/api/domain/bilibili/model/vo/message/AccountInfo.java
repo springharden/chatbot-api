@@ -1,4 +1,4 @@
-package cn.cqq.chatbot.api.domain.bilibili.model.vo;
+package cn.cqq.chatbot.api.domain.bilibili.model.vo.message;
 
 import lombok.Data;
 

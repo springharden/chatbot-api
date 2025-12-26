@@ -1,6 +1,6 @@
 package cn.cqq.chatbot.api.domain.bilibili.model.aggregates;
 
-import cn.cqq.chatbot.api.domain.bilibili.model.res.AnswerData;
+import cn.cqq.chatbot.api.domain.bilibili.model.res.answer.AnswerData;
 import lombok.Data;
 
 @Data

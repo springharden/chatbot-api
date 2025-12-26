@@ -6,7 +6,6 @@ import cn.cqq.chatbot.api.domain.bilibili.model.aggregates.MessageRes;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -31,7 +30,7 @@ import java.util.Map;
 @Service
 public class BiliBiliApi implements IBiliBiliApi {
 
-    @Resource(name = "om")
+    @Resource
     private ObjectMapper objectMapper;
 
     @Override

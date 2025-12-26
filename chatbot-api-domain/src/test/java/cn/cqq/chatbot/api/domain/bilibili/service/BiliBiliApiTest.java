@@ -1,8 +1,8 @@
 package cn.cqq.chatbot.api.domain.bilibili.service;
 
 import cn.cqq.chatbot.api.domain.bilibili.model.aggregates.MessageRes;
-import cn.cqq.chatbot.api.domain.bilibili.model.res.messageData;
-import cn.cqq.chatbot.api.domain.bilibili.model.vo.SessionListItem;
+import cn.cqq.chatbot.api.domain.bilibili.model.res.message.messageData;
+import cn.cqq.chatbot.api.domain.bilibili.model.vo.message.SessionListItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +51,7 @@ class BiliBiliApiTest {
         data.setSessionList(Arrays.asList(sessionListItem));
         expectedResult.setData(data);
 
-        // Configure ObjectMapper.readValue(...).
+        //         Configure ObjectMapper.readValue(...).
         final MessageRes messageRes = new MessageRes();
         messageRes.setMsg("msg");
         messageRes.setCode(0);

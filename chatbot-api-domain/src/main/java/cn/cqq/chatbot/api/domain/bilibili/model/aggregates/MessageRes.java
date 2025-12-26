@@ -1,7 +1,6 @@
 package cn.cqq.chatbot.api.domain.bilibili.model.aggregates;
 
-import cn.cqq.chatbot.api.domain.bilibili.model.res.messageData;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import cn.cqq.chatbot.api.domain.bilibili.model.res.message.messageData;
 import lombok.Data;
 
 /**

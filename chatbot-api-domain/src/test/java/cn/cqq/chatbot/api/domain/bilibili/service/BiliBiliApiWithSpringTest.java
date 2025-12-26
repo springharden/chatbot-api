@@ -1,22 +1,24 @@
 package cn.cqq.chatbot.api.domain.bilibili.service;
 
 import cn.cqq.chatbot.api.domain.bilibili.model.aggregates.MessageRes;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
+import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 // 仅加载domain层的Spring上下文，不依赖外层模块
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DomainTestApplication.class)
 public class BiliBiliApiWithSpringTest {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
     private BiliBiliApi biliBiliApiUnderTest;
@@ -37,6 +39,7 @@ public class BiliBiliApiWithSpringTest {
     @Test
     public void testQueryMessageList() throws Exception {
         MessageRes result = biliBiliApiUnderTest.queryMessageList(cookie, null);
+        logger.info(JSON.toJSONString(result));
         assertNotNull("解析结果为空", result);
         // 其他验证逻辑...
     }

@@ -1,13 +1,13 @@
-package cn.cqq.chatbot.api.domain.bilibili.model.res;
+package cn.cqq.chatbot.api.domain.bilibili.model.res.message;
 
-import cn.cqq.chatbot.api.domain.bilibili.model.vo.SessionListItem;
-import cn.cqq.chatbot.api.domain.bilibili.model.vo.SystemMsg;
+import cn.cqq.chatbot.api.domain.bilibili.model.vo.message.SessionListItem;
+import cn.cqq.chatbot.api.domain.bilibili.model.vo.message.SystemMsg;
 import lombok.Data;
 
 import java.util.List;
 /**
  * @author: chenqingquan
- * @description: 消息列表响应对象
+ * @description: 消息列表对象
  * @date: 2025/12/20 23:00
  */
 

@@ -5,12 +5,16 @@ import cn.cqq.chatbot.api.domain.bilibili.IBiliBiliApi;
 import cn.cqq.chatbot.api.domain.bilibili.model.aggregates.MessageRes;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -24,7 +28,12 @@ import java.util.Map;
  * @version Revision:v1.0
  * @since Date: 2025/12/24
  */
+@Service
 public class BiliBiliApi implements IBiliBiliApi {
+
+    @Resource(name = "om")
+    private ObjectMapper objectMapper;
+
     @Override
     public MessageRes queryMessageList(String cookie, Long lastReceiveMessageTime) {
         OkHttpClient client = new OkHttpClient();
@@ -38,7 +47,6 @@ public class BiliBiliApi implements IBiliBiliApi {
 
         String urlSuffix = "&end_ts=1766278827032286";
 
-        // todo 替换wts
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -62,23 +70,28 @@ public class BiliBiliApi implements IBiliBiliApi {
                 //              .addHeader("Connection", "keep-alive")
                 .build();
 
+        MessageRes messageRes = new MessageRes();
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
                 // 方案1：通过字节流明确指定 UTF-8 编码，避免编码推断错误
                 byte[] responseBytes = response.body().bytes();
-                String res = new String(responseBytes, StandardCharsets.UTF_8);
+                String resJson = new String(responseBytes, StandardCharsets.UTF_8);
 
-                // 方案2：若响应头已明确 Content-Type 为 UTF-8，也可直接用 string()，但方案1更稳妥
-                // String res = response.body().string();
-
-                System.out.println(res);
+                // 2. 核心：将JSON解析为MessageRes对象
+                messageRes = objectMapper.readValue(resJson, MessageRes.class);
+                return messageRes; // 返回解析后的POJO
             } else {
-                System.out.println("响应状态码：" + response.code());
+                System.err.println("响应失败，状态码：" + (response != null ? response.code() : "未知"));
             }
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            System.err.println("JSON解析异常（字段不匹配/类型错误）：");
+            e.printStackTrace();
         } catch (IOException e) {
+            System.err.println("请求或IO异常：");
             e.printStackTrace();
         }
-        return null;
+
+        return messageRes;
     }
 
     @Override

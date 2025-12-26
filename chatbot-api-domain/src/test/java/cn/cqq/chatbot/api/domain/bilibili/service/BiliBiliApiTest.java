@@ -1,14 +1,29 @@
 package cn.cqq.chatbot.api.domain.bilibili.service;
 
 import cn.cqq.chatbot.api.domain.bilibili.model.aggregates.MessageRes;
-import org.junit.Before;
-import org.junit.Test;
+import cn.cqq.chatbot.api.domain.bilibili.model.res.messageData;
+import cn.cqq.chatbot.api.domain.bilibili.model.vo.SessionListItem;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
 
-public class BiliBiliApiTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
+class BiliBiliApiTest {
+
+    @Mock
+    private ObjectMapper mockObjectMapper;
+
+    @InjectMocks
     private BiliBiliApi biliBiliApiUnderTest;
 
     private final String cookie = "DedeUserID=1406650124; DedeUserID__ckMd5=cf4f2bace9d50035; " +
@@ -23,23 +38,81 @@ public class BiliBiliApiTest {
             "SESSDATA=d3f6b305%2C1782049788%2Ccdd88%2Ac1CjDPeHCR0VwDwVB77YS" +
             "-63G8lm5Shpzy1VTTb_qnk0SemF71niZ6xRU60bPuwuEuyM4SVjItT0tJREFkSTRNb2loWlYzY2JrSFdoSkNwTXhvNlFfTklWVjQxdWMtZlFiSGdnVlZzSXM5MTI0QUtsUGVzTG16SXlnbGNiM2I1dU9Gd3Rya2V0eG5RIIEC; bili_jct=dd6b94ae68cffd8dcc566c8ff422fd3a; sid=76fnq06x; buvid_fp=1ad4aea7f822980581373749d554380e; CURRENT_FNVAL=2000; home_feed_column=4; browser_resolution=1099-886; bp_t_offset_1406650124=1150358319664201728";
 
-    @Before
-    public void setUp() {
-        biliBiliApiUnderTest = new BiliBiliApi();
-    }
 
     @Test
-    public void testQueryMessageList() throws Exception {
+    void testQueryMessageList() throws Exception {
         // Setup
+        final MessageRes expectedResult = new MessageRes();
+        expectedResult.setMsg("msg");
+        expectedResult.setCode(0);
+        final messageData data = new messageData();
+        final SessionListItem sessionListItem = new SessionListItem();
+        sessionListItem.setMaxSeqno(0L);
+        data.setSessionList(Arrays.asList(sessionListItem));
+        expectedResult.setData(data);
+
+        // Configure ObjectMapper.readValue(...).
+        final MessageRes messageRes = new MessageRes();
+        messageRes.setMsg("msg");
+        messageRes.setCode(0);
+        final messageData data1 = new messageData();
+        final SessionListItem sessionListItem1 = new SessionListItem();
+        sessionListItem1.setMaxSeqno(0L);
+        data1.setSessionList(Arrays.asList(sessionListItem1));
+        messageRes.setData(data1);
+        when(mockObjectMapper.readValue("content", MessageRes.class)).thenReturn(messageRes);
+
         // Run the test
-        final MessageRes result = biliBiliApiUnderTest.queryMessageList(cookie, null);
+        final MessageRes result = biliBiliApiUnderTest.queryMessageList("cookie", 0L);
 
         // Verify the results
-        assertNull(result);
+        assertThat(result).isEqualTo(expectedResult);
     }
 
     @Test
-    public void testSendMessage() throws Exception {
-        assertTrue(biliBiliApiUnderTest.sendMessage(cookie, "message", 396914695L));
+    void testQueryMessageList_ObjectMapperThrowsJsonProcessingException() throws Exception {
+        // Setup
+        final MessageRes expectedResult = new MessageRes();
+        expectedResult.setMsg("msg");
+        expectedResult.setCode(0);
+        final messageData data = new messageData();
+        final SessionListItem sessionListItem = new SessionListItem();
+        sessionListItem.setMaxSeqno(0L);
+        data.setSessionList(Arrays.asList(sessionListItem));
+        expectedResult.setData(data);
+
+        when(mockObjectMapper.readValue("content", MessageRes.class)).thenThrow(JsonProcessingException.class);
+
+        // Run the test
+        final MessageRes result = biliBiliApiUnderTest.queryMessageList(cookie, 0L);
+
+        // Verify the results
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    void testQueryMessageList_ObjectMapperThrowsJsonMappingException() throws Exception {
+        // Setup
+        final MessageRes expectedResult = new MessageRes();
+        expectedResult.setMsg("msg");
+        expectedResult.setCode(0);
+        final messageData data = new messageData();
+        final SessionListItem sessionListItem = new SessionListItem();
+        sessionListItem.setMaxSeqno(0L);
+        data.setSessionList(Arrays.asList(sessionListItem));
+        expectedResult.setData(data);
+
+        when(mockObjectMapper.readValue("content", MessageRes.class)).thenThrow(JsonMappingException.class);
+
+        // Run the test
+        final MessageRes result = biliBiliApiUnderTest.queryMessageList(cookie, 0L);
+
+        // Verify the results
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    void testSendMessage() {
+        assertThat(biliBiliApiUnderTest.sendMessage(cookie, "message", 0L)).isFalse();
     }
 }

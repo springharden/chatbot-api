@@ -10,17 +10,17 @@ import lombok.Data;
 
 @Data
 public class LastMsg{
-	private int msgSource;
-	private int receiverId;
-	private int msgType;
-	private int msgStatus;
+	private Long msgSource;
+	private Long receiverId;
+	private Long msgType;
+	private Long msgStatus;
 	private String notifyCode;
-	private int senderUid;
-	private long msgKey;
+	private Long senderUid;
+	private Long msgKey;
 	private String content;
-	private long msgSeqno;
-	private int receiverType;
-	private int timestamp;
+	private Long msgSeqno;
+	private Long receiverType;
+	private Long timestamp;
 	private Object atUids;
-	private int newFaceVersion;
+	private Long newFaceVersion;
 }

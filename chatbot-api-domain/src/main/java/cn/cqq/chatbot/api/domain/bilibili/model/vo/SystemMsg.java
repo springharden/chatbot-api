@@ -10,6 +10,6 @@ import lombok.Data;
 
 @Data
 public class SystemMsg{
-	private long jsonMember7;
-	private long jsonMember9;
+	private Long jsonMember7;
+	private Long jsonMember9;
 }
